@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #00BFAE, #01579B);
+            color: #FFFFFF;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        h1 {
+            font-size: 28px;
+            text-align: center;
+            color: #01579B;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        textarea {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            resize: none;
+            background-color: #f4f4f4;
+            color: #333;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            transition: box-shadow 0.3s ease;
+            font-weight: 500;
+            overflow-y: auto;
+        }
+        textarea:focus {
+            box-shadow: 0 8px 25px rgba(0, 173, 181, 0.3);
+            outline: none;
+        }
+        .separator {
+            border-top: 2px solid #01579B;
+        }
+        select {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 12px;
+            background-color: #f4f4f4;
+            color: #333;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        #outputText {
+            font-weight: 700;
+            color: #01579B;
+            white-space: pre-wrap;
+            overflow: hidden;
+            display: inline-block;
+            min-height: 1em;
+        }
+        .char {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: blurIn 0.3s ease forwards;
+        }
+        .char.freeze {
+            animation: none;
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0);
+        }
+        @keyframes blurIn {
+            0% {
+                opacity: 0;
+                filter: blur(5px);
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                filter: blur(0);
+                transform: translateY(0);
+            }
+        }
+        #historyButton {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            align-self: flex-end;
+        }
+        #historyButton i {
+            font-size: 30px;
+            color: #01579B;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Penerjemah Teks Cepat</h1>
+        <textarea id="inputText" placeholder="Masukkan teks di sini..." oninput="autoTranslate()"></textarea>
+        <div class="separator"></div>
+        <div id="outputText" contenteditable="false" placeholder="Hasil terjemahan akan tampil di sini..." readonly></div>
+
+        <select id="fromLang">
+            <!-- Added 50 language options -->
+            <option value="en">Dari: Inggris</option>
+            <option value="id">Dari: Indonesia</option>
+            <option value="es">Dari: Spanyol</option>
+            <option value="fr">Dari: Prancis</option>
+            <option value="de">Dari: Jerman</option>
+            <option value="it">Dari: Italia</option>
+            <option value="pt">Dari: Portugis</option>
+            <option value="ja">Dari: Jepang</option>
+            <option value="ko">Dari: Korea</option>
+            <option value="zh-TW">Dari: Cina Tradisional</option>
+            <option value="zh-CN">Dari: Cina Sederhana</option>
+            <option value="ar">Dari: Arab</option>
+            <option value="ru">Dari: Rusia</option>
+            <option value="tr">Dari: Turki</option>
+            <option value="th">Dari: Thailand</option>
+            <option value="vi">Dari: Vietnam</option>
+            <option value="pl">Dari: Polandia</option>
+            <option value="nl">Dari: Belanda</option>
+            <option value="hi">Dari: Hindi</option>
+            <option value="sw">Dari: Swahili</option>
+            <!-- Add 30 more languages -->
+            <option value="sv">Dari: Swedia</option>
+            <option value="no">Dari: Norwegia</option>
+            <option value="da">Dari: Denmark</option>
+            <option value="fi">Dari: Finlandia</option>
+            <option value="el">Dari: Yunani</option>
+            <option value="hu">Dari: Hungaria</option>
+            <option value="cs">Dari: Ceko</option>
+            <option value="ro">Dari: Rumania</option>
+            <option value="bg">Dari: Bulgaria</option>
+            <option value="sr">Dari: Serbia</option>
+            <option value="hr">Dari: Kroasia</option>
+            <option value="sl">Dari: Slovenia</option>
+            <option value="lt">Dari: Lithuania</option>
+            <option value="lv">Dari: Latvia</option>
+            <option value="et">Dari: Estonia</option>
+            <option value="mk">Dari: Makedonia</option>
+            <option value="sq">Dari: Albania</option>
+            <option value="ms">Dari: Melayu</option>
+            <option value="tl">Dari: Tagalog</option>
+            <option value="bn">Dari: Bengali</option>
+            <option value="pa">Dari: Punjabi</option>
+            <option value="gu">Dari: Gujarati</option>
+            <option value="mr">Dari: Marathi</option>
+            <option value="te">Dari: Telugu</option>
+            <option value="ta">Dari: Tamil</option>
+            <option value="ml">Dari: Malayalam</option>
+            <option value="kn">Dari: Kannada</option>
+            <option value="or">Dari: Odia</option>
+            <option value="ne">Dari: Nepal</option>
+            <option value="si">Dari: Sinhala</option>
+            <option value="km">Dari: Khmer</option>
+            <option value="my">Dari: Myanmar</option>
+        </select>
+
+        <select id="toLang">
+            <!-- Same 50 languages for the target language -->
+            <option value="id">Ke: Indonesia</option>
+            <option value="en">Ke: Inggris</option>
+            <option value="es">Ke: Spanyol</option>
+            <option value="fr">Ke: Prancis</option>
+            <option value="de">Ke: Jerman</option>
+              <option value="it">Ke: Italia</option>
+        <option value="pt">Ke: Portugis</option>
+        <option value="ja">Ke: Jepang</option>
+        <option value="ko">Ke: Korea</option>
+        <option value="zh-TW">Ke: Cina Tradisional</option>
+        <option value="zh-CN">Ke: Cina Sederhana</option>
+        <option value="ar">Ke: Arab</option>
+        <option value="ru">Ke: Rusia</option>
+        <option value="tr">Ke: Turki</option>
+        <option value="th">Ke: Thailand</option>
+        <option value="vi">Ke: Vietnam</option>
+        <option value="pl">Ke: Polandia</option>
+        <option value="nl">Ke: Belanda</option>
+        <option value="hi">Ke: Hindi</option>
+        <option value="sw">Ke: Swahili</option>
+        <!-- Add 30 more languages -->
+        <option value="sv">Ke: Swedia</option>
+        <option value="no">Ke: Norwegia</option>
+        <option value="da">Ke: Denmark</option>
+        <option value="fi">Ke: Finlandia</option>
+        <option value="el">Ke: Yunani</option>
+        <option value="hu">Ke: Hungaria</option>
+        <option value="cs">Ke: Ceko</option>
+        <option value="ro">Ke: Rumania</option>
+        <option value="bg">Ke: Bulgaria</option>
+        <option value="sr">Ke: Serbia</option>
+        <option value="hr">Ke: Kroasia</option>
+        <option value="sl">Ke: Slovenia</option>
+        <option value="lt">Ke: Lithuania</option>
+        <option value="lv">Ke: Latvia</option>
+        <option value="et">Ke: Estonia</option>
+        <option value="mk">Ke: Makedonia</option>
+        <option value="sq">Ke: Albania</option>
+        <option value="ms">Ke: Melayu</option>
+        <option value="tl">Ke: Tagalog</option>
+        <option value="bn">Ke: Bengali</option>
+        <option value="pa">Ke: Punjabi</option>
+        <option value="gu">Ke: Gujarati</option>
+        <option value="mr">Ke: Marathi</option>
+        <option value="te">Ke: Telugu</option>
+        <option value="ta">Ke: Tamil</option>
+        <option value="ml">Ke: Malayalam</option>
+        <option value="kn">Ke: Kannada</option>
+        <option value="or">Ke: Odia</option>
+        <option value="ne">Ke: Nepal</option>
+        <option value="si">Ke: Sinhala</option>
+        <option value="km">Ke: Khmer</option>
+        <option value="my">Ke: Myanmar</option>
+        <!-- Add additional options here as needed -->
+        </select>
+
+        <!-- History Button with Font Awesome icon -->
+        <button id="historyButton" onclick="showHistory()">
+            <i class="fas fa-history"></i>
+        </button>
+    </div>
+
+    <script>
+        let previousText = ''; // Simpan hasil terjemahan sebelumnya
+        let translationHistory = [];  // Riwayat terjemahan
+
+        // Fungsi untuk menerjemahkan teks dengan MyMemory API secara otomatis
+        async function autoTranslate() {
+            const inputText = document.getElementById('inputText').value.trim();
+            const fromLang = document.getElementById('fromLang').value;
+            const toLang = document.getElementById('toLang').value;
+            const outputText = document.getElementById('outputText');
+
+            // Jika input kosong, kosongkan hasil terjemahan
+            if (!inputText) {
+                displayWithAnimation('', outputText);
+                previousText = '';
+                return;
+            }
+
+            const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(inputText)}&langpair=${fromLang}|${toLang}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const translatedText = data.responseData.translatedText;
+
+                // Simpan riwayat terjemahan
+                translationHistory.push({ input: inputText, translated: translatedText });
+
+                // Tampilkan hasil terjemahan dengan animasi
+                displayWithAnimation(translatedText, outputText);
+                previousText = translatedText; // Simpan teks terjemahan terbaru
+            } catch (error) {
+                console.error('Error in translation:', error);
+            }
+        }
+
+        // Fungsi untuk menampilkan hasil terjemahan dengan animasi
+        function displayWithAnimation(text, container) {
+            container.innerHTML = ''; // Hapus teks sebelumnya
+
+            // Cek jika teks berubah, dan animasikan hanya teks yang baru
+            const newText = text.trim();
+            if (newText !== previousText) {
+                const chars = newText.split('');
+                chars.forEach((char, index) => {
+                    const span = document.createElement('span');
+                    span.textContent = char;
+                    span.className = 'char'; // Animasi karakter yang hilang
+                    span.style.animationDelay = `${index * 0.05}s`;
+                    container.appendChild(span);
+                });
+
+                // Animasi karakter
+                setTimeout(() => {
+                    document.querySelectorAll('.char').forEach((char, index) => {
+                        setTimeout(() => {
+                            char.classList.add('freeze');
+                        }, index * 20); // Penundaan animasi per karakter
+                    });
+                }, 100); // Penundaan awal animasi
+            } else {
+                container.textContent = newText;
+            }
+        }
+
+        // Fungsi untuk menampilkan riwayat terjemahan
+        function showHistory() {
+            let historyText = 'Riwayat Terjemahan:\n';
+            translationHistory.forEach((entry, index) => {
+                historyText += `${index + 1}. ${entry.input} => ${entry.translated}\n`;
+            });
+
+            // Menampilkan riwayat dalam dialog
+            alert(historyText || 'Tidak ada riwayat terjemahan.');
+        }
+    </script>
+</body>
+</html>
